@@ -15,12 +15,8 @@ public class GenericDao {
   }
 
   // GenericDao нужно для предоставления общих методов для работы с сущностями, например, можно описать
+
   // методы get или save, которые нечасто будут различаться.
-
-  public <T> T get(Class<T> clazz, Serializable id) {
-    return getSession().get(clazz, id);
-  }
-
   public void save(Object object) {
     if (object == null) {
       return;
@@ -28,9 +24,17 @@ public class GenericDao {
     getSession().save(object);
   }
 
+  public void update(Object object) {
+    if (object == null) return;
+    getSession().update(object);
+  }
+
+  public <T> T get(Class<T> clazz, Serializable id) {
+    return getSession().get(clazz, id);
+  }
+
   protected Session getSession() {
     return sessionFactory.getCurrentSession();
   }
-
 
 }
