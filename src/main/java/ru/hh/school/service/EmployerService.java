@@ -47,7 +47,7 @@ public class EmployerService {
   // работодателя, если он... плохой
   // мы не можем оставить открытой транзакцию на время похода по сети,
   // т.к это очень долгая операция
-  // однако после возвращения из сервиса нем нужно достать связанные данные
+  // однако после возвращения из сервиса нам нужно достать связанные данные
   // так что нужно принять меры к тому, чтобы не получить LazyInitializationException
   public void blockIfEmployerUseBadWords(int employerId) {
     Employer employer = transactionHelper.inTransaction(() -> employerDao.getEager(employerId));
@@ -60,7 +60,7 @@ public class EmployerService {
       return;
     }
 
-    // TODO: сделать сохранение состояния работодателя и его вакансий
+    // Сохранение состояния работодателя и его вакансий
     // сейчас Employer в detached состоянии, т.к. сессия закрылась.
     // это нужно учитывать при последующей работе с таковым
     // про состояния: https://vladmihalcea.com/a-beginners-guide-to-jpa-hibernate-entity-state-transitions/
@@ -69,6 +69,7 @@ public class EmployerService {
     transactionHelper.inTransaction(() -> {
       employer.setBlockTime(LocalDateTime.now());
       employer.getVacancies().forEach(v -> v.setArchivingTime(LocalDateTime.now()));
+      genericDao.update(employer);
     });
   }
 
